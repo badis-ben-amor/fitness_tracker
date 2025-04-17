@@ -122,9 +122,10 @@ export class AuthService {
   }
 
   async refresh(req: Request, res: Response): Promise<Response> {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) throw new BadRequestException('Not token provided');
+
     try {
-      const { refreshToken } = req.cookies;
-      if (!refreshToken) throw new BadRequestException('Not token provided');
       const payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get('REFRESH_TOKEN_SECRET_KEY'),
       });

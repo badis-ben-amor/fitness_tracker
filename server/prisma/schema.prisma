@@ -9,8 +9,10 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  //add
+  relationMode = "prisma"
 }
 
 model User {
@@ -32,6 +34,8 @@ model Meal {
   carbs     Decimal  @db.Decimal(5, 2)
   fats      Decimal  @db.Decimal(5, 2)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  //add
+  @@index([userId])
 }
