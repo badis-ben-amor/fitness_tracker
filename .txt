@@ -1,0 +1,4 @@
+back & front : done : isloading & navbar & auth & user & meal
+
+deploment : done : dtabase(with planetscale) 
+
