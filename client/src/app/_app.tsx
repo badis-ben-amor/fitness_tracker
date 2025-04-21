@@ -14,15 +14,15 @@ const App = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     dispatch(getUserThunk(accessToken));
-    setIsLoading(true);
+    // setIsLoading(true);
   }, []);
 
-  if (!isLoading || profileIsLoading)
-    return (
-      <p className="flex flex-col items-center justifiy-center mt-50">
-        Loading
-      </p>
-    );
+  // if (!isLoading || profileIsLoading)
+  //   return (
+  //     <p className="flex flex-col items-center justifiy-center mt-50">
+  //       Loading
+  //     </p>
+  //   );
 
   return <>{children}</>;
 };

@@ -14,7 +14,6 @@ const Navbar = () => {
   function handleCloseMenu() {
     setIsOpenMenu(false);
   }
-
   return (
     <header className="top-0 sticky z-30 bg-[#f5e1a9] shadow-md">
       <nav className="flex justify-between px-2 py-1">
@@ -43,7 +42,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex space-x-2">
-          {!user?.id ? (
+          {!user?.name ? (
             <>
               <Link href={"/auth/login"}>
                 <Button className="bg-[#b8996a] hover:bg-[#96733e] text-white">

@@ -7,7 +7,7 @@ export const getUserThunk = createAsyncThunk(
   async (accessToken: string, thunkAPI) => {
     try {
       const res = await getUser(accessToken);
-      return res.data;
+      return { data: res.data, accessToken };
     } catch (error: any) {
       if (error.response.status === 401) {
         const res = await refresh();
@@ -20,8 +20,8 @@ export const getUserThunk = createAsyncThunk(
             return thunkAPI.rejectWithValue(error.message);
           }
         }
-        return thunkAPI.rejectWithValue(error.message);
       }
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
@@ -37,7 +37,7 @@ const userSlice = createSlice({
       })
       .addCase(getUserThunk.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.data;
+        state.user = action.payload.data.user;
         state.accessToken = action.payload.accessToken;
       })
       .addCase(getUserThunk.rejected, (state, action: any) => {
