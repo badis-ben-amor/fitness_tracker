@@ -71,54 +71,39 @@ export class AuthService {
     }
   }
 
-  async login(
-    email: string,
-    password: string,
-    res: Response,
-  ): Promise<Response> {
-    try {
-      const user = await this.prisam.user.findUnique({ where: { email } });
-      if (!user) throw new NotFoundException('User not found');
+  async login(email, password: string, res: Response) {
+    const user = await this.prisam.user.findUnique({ where: { email } });
+    if (!user) throw new NotFoundException('User not found');
+    const comparePassword = await bcrypt.compare(password, user.password);
+    if (!comparePassword)
+      throw new UnauthorizedException('Unauthorized credentials');
 
-      const comparePassword = await bcrypt.compare(password, user.password);
-      if (!comparePassword)
-        throw new UnauthorizedException('Unauthorized credentials');
+    const accessToken = this.jwtService.sign(
+      { id: user.id, isAdmin: user.isAdmin },
+      {
+        secret: this.configService.get('ACCESS_TOKEN_SECRET_KEY'),
+        expiresIn: this.configService.get('ACCESS_TOKEN_EXPIRES_IN'),
+      },
+    );
+    const refreshToken = this.jwtService.sign(
+      { id: user.id, isAdmin: user.isAdmin },
+      {
+        secret: this.configService.get('REFRESH_TOKEN_SECRET_KEY'),
+        expiresIn: this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
+      },
+    );
 
-      const accessToken = this.jwtService.sign(
-        { id: user.id, isAdmin: user.isAdmin },
-        {
-          secret: this.configService.get('ACCESS_TOKEN_SECRET_KEY'),
-          expiresIn: this.configService.get('ACCESS_TOKEN_EXPIRES_IN'),
-        },
-      );
-      const refreshToken = this.jwtService.sign(
-        { id: user.id, isAdmin: user.isAdmin },
-        {
-          secret: this.configService.get('REFRESH_TOKEN_SECRET_KEY'),
-          expiresIn: this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
-        },
-      );
-
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: this.configService.get('NODE_ENV') === 'production',
-        maxAge:
-          this.configService.get('REFRESH_TOKEN_MAX_AGE_DAYS') *
-          24 *
-          60 *
-          60 *
-          1000,
-      });
-
-      return res.status(HttpStatus.OK).json({ accessToken });
-    } catch (error) {
-      if (
-        error instanceof NotFoundException ||
-        error instanceof UnauthorizedException
-      )
-        throw error;
-      throw new InternalServerErrorException('Login failed');
-    }
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+      maxAge:
+        this.configService.get('REFRESH_TOKEN_MAX_AGE_DAYS') *
+        24 *
+        60 *
+        60 *
+        1000,
+    });
+    return res.status(HttpStatus.OK).json({ accessToken });
   }
 
   async refresh(req: Request, res: Response): Promise<Response> {

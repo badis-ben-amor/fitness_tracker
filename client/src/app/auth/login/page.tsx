@@ -21,7 +21,9 @@ const Login = () => {
     dispatch(loginThunk({ email, password }))
       .unwrap()
       .then(() => router.push("/"))
-      .catch((err) => setError(err));
+      .catch((err) => {
+        setError(err.message || err);
+      });
   };
   return (
     <div className="w-md mx-auto bg-[#f0f5f1] rounde-lg mt-20 ">

@@ -15,7 +15,9 @@ export const registerThunk = createAsyncThunk(
       const res = await register({ name, email, password });
       return res.data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
   }
 );
@@ -30,7 +32,9 @@ export const loginThunk = createAsyncThunk(
       const res = await login({ email, password });
       return res.data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
   }
 );
