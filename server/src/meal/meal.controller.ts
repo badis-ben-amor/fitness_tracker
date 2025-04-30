@@ -15,9 +15,9 @@ import { MealService } from './meal.service';
 import { CreateMealDto } from './dto/create-meal.dto';
 // import { AuthGuard } from 'src/guards/auth.guard';
 // import { ReqDto } from 'src/common/dto/req.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { ReqDto } from '../common/dto/req.dto';
 import { UpdateMealDTo } from './dto/update-meal.dto';
-import { AuthGuard } from 'guards/auth.guard';
-import { ReqDto } from 'common/dto/req.dto';
 
 @UseGuards(AuthGuard)
 @Controller('meal')
